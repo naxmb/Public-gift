@@ -1,0 +1,65 @@
+local DiscordLib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/discord%20lib.txt")()
+
+local win = DiscordLib:Window("SynxAdam")
+
+local serv = win:Server("Box Stealer", "")
+
+local btns = serv:Channel("Scripts")
+
+btns:Button("Gift Giver", function()
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character
+local humanoidRootPart = character.HumanoidRootPart
+local workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+
+-- Save the initial CFrame of the character
+local initialCFrame = humanoidRootPart.CFrame
+
+-- Set the initial value of the flag to true
+local shouldTeleport = true
+
+-- Create a function to handle the "F" key press
+local function onFKeyPressed()
+  -- Toggle the value of the flag
+  shouldTeleport = not shouldTeleport
+end
+
+-- Bind the function to the "F" key press event
+UserInputService.InputBegan:Connect(function(input)
+  if input.KeyCode == Enum.KeyCode.F then
+    onFKeyPressed()
+  end
+end)
+
+while true do
+  -- Check the value of the flag
+  if shouldTeleport then
+    -- Get all gift boxes in the workspace
+    local giftBoxes = workspace.GameDebris:GetChildren()
+
+    for _, giftBox in pairs(giftBoxes) do
+      -- Check if the GiftBox has a child mesh with the correct texture ID
+      if giftBox:FindFirstChild("Mesh") and giftBox.Mesh and (giftBox.Mesh.TextureId == 'rbxassetid://11496804920' or giftBox.Mesh.TextureId == 'rbxassetid://1223053797' or giftBox.Mesh.TextureId == 'rbxassetid://6271379076' or giftBox.Mesh.TextureId == 'rbxassetid://190001518') then
+        -- Start a new coroutine that teleports the character to the gift box's position
+        spawn(function()
+          -- Save the character's current position
+          local currentPosition = humanoidRootPart.Position
+
+          -- Teleport the player's character to the GiftBox, using the gift box's position instead of its CFrame
+          humanoidRootPart.CFrame = CFrame.new(giftBox.Position)
+          wait(0.4)
+          -- Set the character's CFrame back to the current position
+          humanoidRootPart.CFrame = CFrame.new(currentPosition)
+        end)
+      end
+    end
+
+    -- Wait for 0.3 second before the next iteration
+    wait(1)
+  else
+    -- If the flag is set to false, don't do anything and just wait for the next frame
+    wait()
+  end
+end
+end)
